@@ -53,23 +53,24 @@ async function postChatAlert(alert) {
 
 /** The investigation prompt is the most important context Devin receives. */
 function buildPrompt(alert) {
-  return [
+  const lines = [
     `A production incident just fired in the ${alert.service} service (${alert.environment}).`,
     '',
     `Error: ${alert.errorClass}: ${alert.message}`,
     `Likely culprit: ${alert.culprit}`,
     `Request ID: ${alert.requestId}`,
-    alert.tags ? `Tags: ${JSON.stringify(alert.tags)}` : '',
-    alert.context ? `Context: ${JSON.stringify(alert.context)}` : '',
+  ];
+  if (alert.tags) lines.push(`Tags: ${JSON.stringify(alert.tags)}`);
+  if (alert.context) lines.push(`Context: ${JSON.stringify(alert.context)}`);
+  lines.push(
     '',
     'Please investigate autonomously:',
     '1. Read the telemetry above and locate the failing code path.',
     '2. Determine the root cause of the exception.',
     '3. Implement a minimal, correct fix with a regression test.',
     '4. Open a pull request describing the root cause and the fix.',
-  ]
-    .filter(Boolean)
-    .join('\n');
+  );
+  return lines.join('\n');
 }
 
 /** Create a Devin session via the REST API. Returns { sessionId, url } or null. */
@@ -126,7 +127,13 @@ function createAlertAndTriggerAI(alert) {
     captureException(alert),
     postChatAlert(alert),
     triggerAI(alert),
-  ]).catch((e) => logger.error('Failed to run remediation pipeline', { error: e.message }));
+  ]).then((results) => {
+    for (const r of results) {
+      if (r.status === 'rejected') {
+        logger.error('Remediation pipeline step failed', { reason: String(r.reason) });
+      }
+    }
+  });
 }
 
 module.exports = { createAlertAndTriggerAI, buildPrompt };

@@ -9,7 +9,7 @@ const logger = require('./src/logger');
 const sessionCap = require('./src/sessionCap');
 const { resolveIdentity } = require('./src/identity');
 const { createAlertAndTriggerAI } = require('./src/pipeline');
-const { VERTICALS, BY_ENDPOINT, BY_ID } = require('./src/verticals');
+const { VERTICALS, BY_ID } = require('./src/verticals');
 
 const app = express();
 app.disable('x-powered-by');
