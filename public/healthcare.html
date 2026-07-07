@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarePoint Health &mdash; Patient Portal</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #1565c0; --blue-light: #1976d2; --blue-dim: rgba(21,101,192,0.04);
+      --blue-border: rgba(21,101,192,0.12);
+      --bg: #f5f7fa; --white: #ffffff;
+      --mint: #e8f5e9; --mint-text: #2e7d32;
+      --gray-50: #fafbfc; --gray-100: #f0f2f5; --gray-200: #e1e5ea;
+      --gray-300: #c9ced6; --gray-400: #9aa1ad; --gray-500: #6b7585;
+      --gray-600: #4a5568; --gray-700: #2d3748; --gray-800: #1a202c;
+      --danger: #d32f2f; --danger-bg: #ffebee; --danger-border: #ef9a9a;
+      --success: #2e7d32; --success-bg: #e8f5e9; --success-border: #a5d6a7;
+      --amber: #f57f17; --amber-bg: #fff8e1;
+      --heading: 'Lora', Georgia, serif;
+      --body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 12px rgba(0,0,0,0.03);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--body); background: var(--bg); color: var(--gray-700); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .fi { animation: fadeIn 0.5s ease both; }
+    .fi1 { animation-delay: 0.05s; } .fi2 { animation-delay: 0.1s; } .fi3 { animation-delay: 0.15s; } .fi4 { animation-delay: 0.2s; } .fi5 { animation-delay: 0.25s; }
+
+    header { background: var(--white); border-bottom: 1px solid var(--gray-200); padding: 0 clamp(1.5rem, 4vw, 3rem); height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 0.6rem; }
+    .logo-cross { width: 32px; height: 32px; background: var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .logo-cross::before, .logo-cross::after { content: ''; position: absolute; background: #fff; border-radius: 1px; }
+    .logo-cross::before { width: 14px; height: 4px; }
+    .logo-cross::after { width: 4px; height: 14px; }
+    .logo-text { font-family: var(--heading); font-size: 1.2rem; font-weight: 600; color: var(--blue); }
+    .logo-text span { color: var(--gray-400); font-weight: 400; }
+    nav { display: flex; gap: 0.15rem; }
+    nav a { color: var(--gray-500); text-decoration: none; font-size: 0.82rem; font-weight: 600; padding: 0.45rem 0.85rem; border-radius: 8px; transition: all 0.2s; }
+    nav a:hover { background: var(--blue-dim); color: var(--blue); }
+    nav a.active { background: var(--blue); color: #fff; }
+
+    .page { max-width: 1060px; margin: 0 auto; padding: 1.5rem clamp(1.5rem, 4vw, 3rem); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--blue); text-decoration: none; font-size: 0.78rem; font-weight: 600; margin-bottom: 1rem; }
+
+    .patient-banner { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; box-shadow: var(--shadow); }
+    .patient-info h1 { font-family: var(--heading); font-size: 1.4rem; font-weight: 600; color: var(--gray-800); margin-bottom: 0.1rem; }
+    .patient-info p { font-size: 0.82rem; color: var(--gray-500); }
+    .patient-id { font-family: var(--mono); font-size: 0.72rem; color: var(--gray-400); margin-top: 0.25rem; }
+    .next-appt { text-align: right; }
+    .next-appt .label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-400); margin-bottom: 0.15rem; }
+    .next-appt .date { font-family: var(--heading); font-size: 1.1rem; color: var(--blue); }
+    .next-appt .doctor { font-size: 0.78rem; color: var(--gray-500); }
+
+    .health-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    @media (max-width: 800px) { .health-grid { grid-template-columns: 1fr 1fr; } }
+    .health-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow); }
+    .health-label { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-400); margin-bottom: 0.3rem; }
+    .health-value { font-size: 1.5rem; font-weight: 700; color: var(--gray-800); }
+    .health-value .unit { font-size: 0.7rem; font-weight: 500; color: var(--gray-400); }
+    .health-status { font-size: 0.68rem; font-weight: 700; margin-top: 0.2rem; }
+    .health-status.normal { color: var(--success); }
+    .health-status.elevated { color: var(--amber); }
+
+    .section-title { font-family: var(--heading); font-size: 1rem; font-weight: 600; color: var(--gray-800); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem; }
+    .section-title::before { content: ''; width: 3px; height: 18px; background: var(--blue); border-radius: 2px; }
+
+    .meds-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 1.5rem; }
+    .meds-table { width: 100%; border-collapse: collapse; }
+    .meds-table th { text-align: left; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); padding: 0.65rem 1.15rem; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+    .meds-table td { padding: 0.7rem 1.15rem; border-bottom: 1px solid var(--gray-100); font-size: 0.82rem; }
+    .meds-table tbody tr:last-child td { border-bottom: none; }
+    .meds-table tbody tr:hover td { background: var(--blue-dim); }
+    .med-name { font-weight: 700; color: var(--gray-800); }
+    .badge-refill { font-size: 0.62rem; font-weight: 700; color: var(--amber); background: var(--amber-bg); padding: 0.12rem 0.45rem; border-radius: 20px; }
+    .badge-ok { font-size: 0.62rem; font-weight: 700; color: var(--success); background: var(--success-bg); padding: 0.12rem 0.45rem; border-radius: 20px; }
+
+    .rx-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow); max-width: 540px; }
+    .rx-card h2 { font-family: var(--heading); font-size: 1rem; font-weight: 600; color: var(--gray-800); margin-bottom: 1.15rem; }
+    .form-group { margin-bottom: 0.85rem; }
+    .form-group label { display: block; font-size: 0.72rem; font-weight: 700; color: var(--gray-500); margin-bottom: 0.25rem; }
+    .form-group select, .form-group input { width: 100%; padding: 0.6rem 0.8rem; border: 1.5px solid var(--gray-200); border-radius: 8px; font-family: var(--body); font-size: 0.85rem; color: var(--gray-700); background: #fff; transition: all 0.2s; }
+    .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(21,101,192,0.08); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .btn-rx { width: 100%; padding: 0.7rem; background: var(--blue); color: #fff; border: none; border-radius: 8px; font-size: 0.82rem; font-weight: 700; font-family: var(--body); cursor: pointer; transition: all 0.2s; }
+    .btn-rx:hover { background: var(--blue-light); transform: translateY(-1px); }
+    .btn-rx:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .result-box { margin-top: 0.65rem; padding: 0.65rem 0.85rem; border-radius: 8px; font-size: 0.78rem; display: none; }
+    .result-box.error { display: block; background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger); }
+    .result-box.success { display: block; background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success); }
+    .result-box .error-title { font-weight: 800; margin-bottom: 0.1rem; }
+    .result-box .error-detail { font-family: var(--mono); font-size: 0.68rem; opacity: 0.85; word-break: break-all; }
+    .hipaa-note { margin-top: 1.25rem; padding: 0.6rem 0.85rem; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 6px; font-size: 0.68rem; color: var(--gray-400); display: flex; align-items: center; gap: 0.4rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><div class="logo-cross"></div><div class="logo-text">CarePoint <span>Health</span></div></div>
+    <nav><a href="#" class="active">Dashboard</a><a href="#">Appointments</a><a href="#">Medications</a><a href="#">Records</a><a href="#">Messages</a></nav>
+  </header>
+  <div class="page">
+    <a href="/" class="back-link fi">&larr; All Demos</a>
+    <div class="patient-banner fi fi1">
+      <div class="patient-info">
+        <h1>Welcome, Emily Rodriguez</h1>
+        <p>Primary Care &middot; Dr. Sarah Mitchell</p>
+        <div class="patient-id">MRN: PTN-2024-88421</div>
+      </div>
+      <div class="next-appt">
+        <div class="label">Next Appointment</div>
+        <div class="date">March 28, 2025</div>
+        <div class="doctor">Annual Physical &middot; 10:30 AM</div>
+      </div>
+    </div>
+    <div class="health-grid fi fi2">
+      <div class="health-card"><div class="health-label">Blood Pressure</div><div class="health-value">118/76 <span class="unit">mmHg</span></div><div class="health-status normal">Normal</div></div>
+      <div class="health-card"><div class="health-label">Heart Rate</div><div class="health-value">72 <span class="unit">bpm</span></div><div class="health-status normal">Normal</div></div>
+      <div class="health-card"><div class="health-label">Blood Glucose</div><div class="health-value">105 <span class="unit">mg/dL</span></div><div class="health-status elevated">Borderline</div></div>
+      <div class="health-card"><div class="health-label">BMI</div><div class="health-value">24.2</div><div class="health-status normal">Healthy</div></div>
+    </div>
+    <div class="fi fi3">
+      <div class="section-title">Current Medications</div>
+      <div class="meds-card">
+        <table class="meds-table">
+          <thead><tr><th>Medication</th><th>Dosage</th><th>Frequency</th><th>Prescriber</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="med-name">Lisinopril</td><td>10mg</td><td>Once daily</td><td>Dr. Mitchell</td><td><span class="badge-ok">Active</span></td></tr>
+            <tr><td class="med-name">Metformin</td><td>500mg</td><td>Twice daily</td><td>Dr. Mitchell</td><td><span class="badge-ok">Active</span></td></tr>
+            <tr><td class="med-name">Atorvastatin</td><td>20mg</td><td>Once daily (PM)</td><td>Dr. Patel</td><td><span class="badge-refill">Refill needed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="fi fi4">
+      <div class="section-title">Schedule Appointment</div>
+      <div class="rx-card">
+        <h2>New Appointment</h2>
+        <form id="rxForm">
+          <div class="form-group"><label>Provider</label><select id="providerId"><option value="DR-101">Dr. Sarah Kim &mdash; Internal Medicine</option><option value="DR-102">Dr. James Patel &mdash; Cardiology</option><option value="DR-103">Dr. Maria Santos &mdash; Dermatology</option><option value="DR-105">Dr. Emily Zhao &mdash; Neurology</option></select></div>
+          <div class="form-row">
+            <div class="form-group"><label>Department</label><select id="department"><option value="primary-care">Primary Care</option><option value="cardiology">Cardiology</option><option value="dermatology">Dermatology</option><option value="neurology">Neurology</option></select></div>
+            <div class="form-group"><label>Date</label><input type="date" id="appointmentDate" value="2026-12-15"></div>
+          </div>
+          <div class="form-group"><label>Patient ID</label><select id="patientId"><option value="PAT-2001">PAT-2001 &mdash; Gold Plan</option><option value="PAT-2002">PAT-2002 &mdash; Silver Plan</option><option value="PAT-2003">PAT-2003 &mdash; Bronze Plan</option></select></div>
+          <button type="submit" class="btn-rx" id="submitBtn">Schedule Appointment</button>
+        </form>
+        <div id="result" class="result-box"></div>
+        <div class="hipaa-note">Protected by HIPAA. Your health information is encrypted and secure.</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    /* Ensure locked-mode config is in localStorage for direct navigation */
+    (function () {
+      if (localStorage.getItem('devinOrgId') && localStorage.getItem('devinUserId')) return;
+      fetch('/api/config').then(function (r) { return r.json(); }).then(function (cfg) {
+        if (cfg.lockOrg && cfg.defaultOrgId) localStorage.setItem('devinOrgId', cfg.defaultOrgId);
+        if (cfg.lockUser && cfg.defaultUserId) localStorage.setItem('devinUserId', cfg.defaultUserId);
+      }).catch(function () {});
+    })();
+  </script>
+  <script>
+    document.getElementById('rxForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const result = document.getElementById('result');
+      btn.disabled = true; btn.textContent = 'Submitting...';
+      result.className = 'result-box';
+      try {
+        const res = await fetch('/api/healthcare/appointment', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ patientId: document.getElementById('patientId').value, providerId: document.getElementById('providerId').value, department: document.getElementById('department').value, appointmentDate: document.getElementById('appointmentDate').value, devinUserId: localStorage.getItem('devinUserId') || '', devinOrgId: localStorage.getItem('devinOrgId') || '', devinEmail: localStorage.getItem('devinEmail') || '' }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          result.className = 'result-box error';
+          result.innerHTML = `<div class="error-title">Scheduling Failed</div><div class="error-detail">${data.errorClass}: ${data.error}</div>`;
+        } else {
+          result.className = 'result-box success';
+          result.innerHTML = `<div class="error-title">Appointment Confirmed</div><div class="error-detail">${data.provider} &mdash; ${data.department} &mdash; ${data.date} &mdash; Copay: $${data.copay}</div>`;
+        }
+      } catch (err) {
+        result.className = 'result-box error';
+        result.innerHTML = `<div class="error-title">Network Error</div><div class="error-detail">${err.message}</div>`;
+      } finally { btn.disabled = false; btn.textContent = 'Schedule Appointment'; }
+    });
+  </script>
+  <script src="/session-cap-banner.js"></script>
+</body>
+</html>
