@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaSoft &mdash; License Management Console</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafafa; --white: #ffffff;
+      --violet: #6d28d9; --violet-light: #7c3aed; --violet-dim: rgba(109,40,217,0.04);
+      --violet-border: rgba(109,40,217,0.12);
+      --gray-50: #fafafa; --gray-100: #f4f4f5; --gray-200: #e4e4e7;
+      --gray-300: #d4d4d8; --gray-400: #a1a1aa; --gray-500: #71717a;
+      --gray-600: #52525b; --gray-700: #3f3f46; --gray-800: #27272a; --gray-900: #18181b;
+      --danger: #dc2626; --danger-bg: #fef2f2; --danger-border: #fecaca;
+      --success: #16a34a; --success-bg: #f0fdf4; --success-border: #bbf7d0;
+      --amber: #d97706; --amber-bg: #fffbeb; --amber-border: #fde68a;
+      --sans: 'Sora', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--gray-800); line-height: 1.6; -webkit-font-smoothing: antialiased; font-size: 14px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .fi { animation: fadeIn 0.4s ease both; }
+    .fi1 { animation-delay: 0.05s; } .fi2 { animation-delay: 0.1s; } .fi3 { animation-delay: 0.15s; } .fi4 { animation-delay: 0.2s; }
+
+    .app-shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+    @media (max-width: 800px) { .app-shell { grid-template-columns: 1fr; } .sidebar-nav { display: none; } }
+
+    .sidebar-nav { background: var(--white); border-right: 1px solid var(--gray-200); padding: 1.25rem 0; display: flex; flex-direction: column; }
+    .sidebar-brand { padding: 0 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .sidebar-logo { width: 28px; height: 28px; background: var(--violet); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .sidebar-logo svg { width: 16px; height: 16px; fill: #fff; }
+    .sidebar-name { font-size: 0.95rem; font-weight: 700; color: var(--gray-900); letter-spacing: -0.03em; }
+    .nav-section { padding: 0 0.75rem; margin-bottom: 0.5rem; }
+    .nav-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-400); padding: 0 0.5rem; margin-bottom: 0.25rem; }
+    .nav-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.75rem; font-size: 0.82rem; font-weight: 500; color: var(--gray-500); text-decoration: none; border-radius: 6px; transition: all 0.15s; margin-bottom: 1px; }
+    .nav-item:hover { background: var(--gray-100); color: var(--gray-800); }
+    .nav-item.active { background: var(--violet-dim); color: var(--violet); font-weight: 600; border: 1px solid var(--violet-border); }
+    .nav-item .badge { margin-left: auto; font-size: 0.6rem; font-weight: 700; background: var(--violet); color: #fff; padding: 0.1rem 0.4rem; border-radius: 10px; }
+    .sidebar-footer { margin-top: auto; padding: 0.75rem 1.25rem; border-top: 1px solid var(--gray-200); }
+    .sidebar-user { font-size: 0.78rem; font-weight: 600; color: var(--gray-700); }
+    .sidebar-role { font-size: 0.68rem; color: var(--gray-400); }
+
+    .main { padding: 1.5rem 2rem; overflow-y: auto; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--violet); text-decoration: none; font-size: 0.75rem; font-weight: 600; margin-bottom: 1rem; }
+    .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; }
+    .page-header h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.03em; color: var(--gray-900); }
+    .page-header p { font-size: 0.82rem; color: var(--gray-500); margin-top: 0.15rem; }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .metric { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 1.15rem; }
+    .metric-label { font-size: 0.68rem; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+    .metric-val { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; color: var(--gray-900); }
+    .metric-change { font-size: 0.7rem; font-weight: 600; margin-top: 0.15rem; }
+    .metric-change.up { color: var(--success); }
+    .metric-change.down { color: var(--danger); }
+
+    .section-title { font-size: 0.85rem; font-weight: 700; color: var(--gray-900); margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+
+    .table-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; margin-bottom: 1.5rem; }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table th { text-align: left; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); padding: 0.7rem 1rem; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+    .data-table td { padding: 0.7rem 1rem; border-bottom: 1px solid var(--gray-100); font-size: 0.82rem; }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover td { background: var(--violet-dim); }
+    .badge-active { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.68rem; font-weight: 600; color: var(--success); background: var(--success-bg); padding: 0.15rem 0.5rem; border-radius: 20px; }
+    .badge-active::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+    .badge-warn { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.68rem; font-weight: 600; color: var(--amber); background: var(--amber-bg); padding: 0.15rem 0.5rem; border-radius: 20px; }
+    .mono { font-family: var(--mono); font-size: 0.75rem; color: var(--gray-500); }
+
+    .provision-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 1.5rem; max-width: 520px; }
+    .provision-card h2 { font-size: 0.95rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 1.15rem; color: var(--gray-900); }
+    .form-group { margin-bottom: 0.85rem; }
+    .form-group label { display: block; font-size: 0.7rem; font-weight: 600; color: var(--gray-500); margin-bottom: 0.2rem; }
+    .form-group select, .form-group input { width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--gray-200); border-radius: 8px; font-family: var(--sans); font-size: 0.82rem; color: var(--gray-800); background: #fff; transition: all 0.15s; }
+    .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 3px rgba(109,40,217,0.08); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .btn-provision { width: 100%; padding: 0.65rem; background: var(--violet); color: #fff; border: none; border-radius: 8px; font-size: 0.82rem; font-weight: 600; font-family: var(--sans); cursor: pointer; transition: all 0.15s; }
+    .btn-provision:hover { background: var(--violet-light); transform: translateY(-1px); }
+    .btn-provision:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .result-box { margin-top: 0.6rem; padding: 0.6rem 0.8rem; border-radius: 8px; font-size: 0.78rem; display: none; }
+    .result-box.error { display: block; background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger); }
+    .result-box.success { display: block; background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success); }
+    .result-box .error-title { font-weight: 700; margin-bottom: 0.1rem; }
+    .result-box .error-detail { font-family: var(--mono); font-size: 0.68rem; opacity: 0.85; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar-nav">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo"><svg viewBox="0 0 24 24"><polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"/></svg></div>
+        <div class="sidebar-name">NovaSoft</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Overview</div>
+        <a href="#" class="nav-item active">Dashboard</a>
+        <a href="#" class="nav-item">Analytics</a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Management</div>
+        <a href="#" class="nav-item">Licenses <span class="badge">24</span></a>
+        <a href="#" class="nav-item">Users</a>
+        <a href="#" class="nav-item">Teams</a>
+        <a href="#" class="nav-item">Provisioning</a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Settings</div>
+        <a href="#" class="nav-item">Billing</a>
+        <a href="#" class="nav-item">API Keys</a>
+        <a href="#" class="nav-item">Integrations</a>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">Sarah Kim</div>
+        <div class="sidebar-role">Platform Admin</div>
+      </div>
+    </aside>
+    <main class="main">
+      <a href="/" class="back-link fi">&larr; All Demos</a>
+      <div class="page-header fi fi1">
+        <div><h1>License Management</h1><p>Manage SaaS licenses, seats, and provisioning</p></div>
+      </div>
+      <div class="metrics fi fi2">
+        <div class="metric"><div class="metric-label">Total Licenses</div><div class="metric-val">2,450</div><div class="metric-change up">+8% this quarter</div></div>
+        <div class="metric"><div class="metric-label">Active Users</div><div class="metric-val">1,892</div><div class="metric-change up">77% utilization</div></div>
+        <div class="metric"><div class="metric-label">Annual Spend</div><div class="metric-val">$284K</div><div class="metric-change down">+12% vs budget</div></div>
+        <div class="metric"><div class="metric-label">Renewals Due</div><div class="metric-val">6</div><div class="metric-change">next 30 days</div></div>
+      </div>
+      <div class="fi fi3">
+        <div class="section-title">License Inventory</div>
+        <div class="table-card">
+          <table class="data-table">
+            <thead><tr><th>Product</th><th>License Key</th><th>Seats</th><th>Status</th><th>Renewal</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Enterprise Suite Pro</strong></td><td class="mono">LIC-ENT-2024-001</td><td>500 / 500</td><td><span class="badge-active">Active</span></td><td>Jun 2025</td></tr>
+              <tr><td><strong>DevOps Platform</strong></td><td class="mono">LIC-DEV-2024-003</td><td>120 / 150</td><td><span class="badge-active">Active</span></td><td>Sep 2025</td></tr>
+              <tr><td><strong>Analytics Cloud</strong></td><td class="mono">LIC-ANA-2024-007</td><td>85 / 100</td><td><span class="badge-active">Active</span></td><td>Dec 2025</td></tr>
+              <tr><td><strong>Security Gateway</strong></td><td class="mono">LIC-SEC-2024-012</td><td>48 / 50</td><td><span class="badge-warn">96% used</span></td><td>Apr 2025</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="fi fi4">
+        <div class="section-title">Provision License</div>
+        <div class="provision-card">
+          <h2>Add New License Seats</h2>
+          <form id="provisionForm">
+            <div class="form-group"><label>Product</label><select id="product"><option value="enterprise_suite">Enterprise Suite Pro</option><option value="devops_platform">DevOps Platform</option><option value="analytics_cloud">Analytics Cloud</option><option value="security_gateway">Security Gateway</option></select></div>
+            <div class="form-row">
+              <div class="form-group"><label>Additional Seats</label><input type="number" id="seats" value="25" min="1"></div>
+              <div class="form-group"><label>Plan Tier</label><select id="planTier"><option value="enterprise">Enterprise</option><option value="business">Business</option><option value="starter">Starter</option></select></div>
+            </div>
+            <div class="form-group"><label>Deployment Region</label><select id="region"><option value="us-east">US East</option><option value="us-west">US West</option><option value="eu-west">EU West</option><option value="ap-south">AP South</option></select></div>
+            <button type="submit" class="btn-provision" id="submitBtn">Provision Seats</button>
+          </form>
+          <div id="result" class="result-box"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script>
+    /* Ensure locked-mode config is in localStorage for direct navigation */
+    (function () {
+      if (localStorage.getItem('devinOrgId') && localStorage.getItem('devinUserId')) return;
+      fetch('/api/config').then(function (r) { return r.json(); }).then(function (cfg) {
+        if (cfg.lockOrg && cfg.defaultOrgId) localStorage.setItem('devinOrgId', cfg.defaultOrgId);
+        if (cfg.lockUser && cfg.defaultUserId) localStorage.setItem('devinUserId', cfg.defaultUserId);
+      }).catch(function () {});
+    })();
+  </script>
+  <script>
+    document.getElementById('provisionForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const result = document.getElementById('result');
+      btn.disabled = true; btn.textContent = 'Provisioning...';
+      result.className = 'result-box';
+      try {
+        const res = await fetch('/api/licenses/provision', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orgName: document.getElementById('product').value, planName: document.getElementById('planTier').value, seats: parseInt(document.getElementById('seats').value), billingCycle: 'annual', devinUserId: localStorage.getItem('devinUserId') || '', devinOrgId: localStorage.getItem('devinOrgId') || '', devinEmail: localStorage.getItem('devinEmail') || '' }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          result.className = 'result-box error';
+          result.innerHTML = `<div class="error-title">Provisioning Failed</div><div class="error-detail">${data.errorClass}: ${data.error}</div>`;
+        } else {
+          result.className = 'result-box success';
+          result.innerHTML = `<div class="error-title">Seats Provisioned</div><div class="error-detail">${data.seatsAdded} seats added to ${data.product} &mdash; Total: $${data.annualCost}/yr</div>`;
+        }
+      } catch (err) {
+        result.className = 'result-box error';
+        result.innerHTML = `<div class="error-title">Network Error</div><div class="error-detail">${err.message}</div>`;
+      } finally { btn.disabled = false; btn.textContent = 'Provision Seats'; }
+    });
+  </script>
+  <script src="/session-cap-banner.js"></script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harvest Goods Co. &mdash; Distributor Portal</title>
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600;700;800&family=Work+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest: #2d5016; --forest-light: #3d6b20; --forest-dim: rgba(45,80,22,0.06);
+      --cream: #faf6f0; --sand: #f0e9dd; --paper: #ffffff;
+      --terra: #c2703e; --terra-dim: rgba(194,112,62,0.08);
+      --charcoal: #2a2a2a; --gray-100: #f5f2ed; --gray-200: #e8e2d8;
+      --gray-300: #d1c9bc; --gray-400: #a69e8f; --gray-500: #7a7265;
+      --gray-600: #5c564c; --gray-700: #3d3832;
+      --danger: #c0392b; --danger-bg: #fdf0ee; --danger-border: #f5c6c0;
+      --success: #27ae60; --success-bg: #eef9f0; --success-border: #a3e4b8;
+      --display: 'Fraunces', Georgia, serif;
+      --body: 'Work Sans', -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--body); background: var(--cream); color: var(--charcoal); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .fi { animation: fadeIn 0.5s ease both; }
+    .fi1 { animation-delay: 0.05s; } .fi2 { animation-delay: 0.1s; } .fi3 { animation-delay: 0.15s; } .fi4 { animation-delay: 0.2s; }
+
+    header { background: var(--forest); padding: 0 clamp(1.5rem, 4vw, 3rem); height: 60px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: var(--display); font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+    .logo span { color: var(--terra); font-style: italic; }
+    nav { display: flex; gap: 0.2rem; }
+    nav a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.82rem; font-weight: 500; padding: 0.4rem 0.8rem; border-radius: 6px; transition: all 0.2s; }
+    nav a:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    nav a.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .page { max-width: 1080px; margin: 0 auto; padding: 1.5rem clamp(1.5rem, 4vw, 3rem); }
+    .back-link { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--forest); text-decoration: none; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
+
+    .page-title { font-family: var(--display); font-size: 1.5rem; font-weight: 700; color: var(--charcoal); margin-bottom: 0.25rem; }
+    .page-subtitle { color: var(--gray-500); font-size: 0.88rem; margin-bottom: 1.5rem; }
+
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.75rem; }
+    @media (max-width: 800px) { .kpi-row { grid-template-columns: 1fr 1fr; } }
+    .kpi { background: var(--paper); border: 1px solid var(--gray-200); border-radius: 10px; padding: 1.15rem; box-shadow: var(--shadow); }
+    .kpi-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 0.35rem; }
+    .kpi-value { font-family: var(--display); font-size: 1.6rem; font-weight: 700; color: var(--forest); }
+    .kpi-sub { font-size: 0.72rem; color: var(--gray-400); margin-top: 0.15rem; }
+
+    .section-header { font-family: var(--display); font-size: 1.1rem; font-weight: 600; color: var(--charcoal); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .section-header::before { content: ''; width: 14px; height: 14px; background: var(--terra); border-radius: 3px; }
+
+    .catalog { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.75rem; }
+    @media (max-width: 800px) { .catalog { grid-template-columns: 1fr 1fr; } }
+    .product-card { background: var(--paper); border: 1px solid var(--gray-200); border-radius: 10px; padding: 1.15rem; box-shadow: var(--shadow); transition: transform 0.2s; }
+    .product-card:hover { transform: translateY(-2px); }
+    .product-sku { font-family: var(--mono); font-size: 0.65rem; color: var(--gray-400); margin-bottom: 0.35rem; }
+    .product-name { font-family: var(--display); font-size: 1rem; font-weight: 600; margin-bottom: 0.15rem; }
+    .product-cat { font-size: 0.72rem; color: var(--terra); font-weight: 600; margin-bottom: 0.5rem; }
+    .product-row { display: flex; justify-content: space-between; align-items: center; }
+    .product-price { font-family: var(--display); font-size: 1.15rem; font-weight: 700; color: var(--forest); }
+    .product-stock { font-size: 0.72rem; color: var(--gray-400); }
+    .stock-low { color: var(--danger); font-weight: 600; }
+
+    .order-card { background: var(--paper); border: 1px solid var(--gray-200); border-radius: 10px; padding: 2rem; box-shadow: var(--shadow); max-width: 520px; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--gray-600); margin-bottom: 0.25rem; }
+    .form-group select, .form-group input { width: 100%; padding: 0.6rem 0.75rem; border: 1.5px solid var(--gray-200); border-radius: 8px; font-family: var(--body); font-size: 0.88rem; color: var(--charcoal); background: #fff; transition: border-color 0.2s; }
+    .form-group select:focus, .form-group input:focus { outline: none; border-color: var(--forest); box-shadow: 0 0 0 3px var(--forest-dim); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .btn-order { width: 100%; padding: 0.7rem; background: var(--forest); color: #fff; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600; font-family: var(--body); cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .btn-order:hover { background: var(--forest-light); transform: translateY(-1px); }
+    .btn-order:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .result-box { margin-top: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; display: none; }
+    .result-box.error { display: block; background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger); }
+    .result-box.success { display: block; background: var(--success-bg); border: 1px solid var(--success-border); color: var(--success); }
+    .result-box .error-title { font-weight: 700; margin-bottom: 0.15rem; }
+    .result-box .error-detail { font-family: var(--mono); font-size: 0.72rem; opacity: 0.85; word-break: break-all; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Harvest <span>Goods</span> Co.</div>
+    <nav><a href="#" class="active">Dashboard</a><a href="#">Catalog</a><a href="#">Orders</a><a href="#">Distribution</a><a href="#">Reports</a></nav>
+  </header>
+  <div class="page">
+    <a href="/" class="back-link fi">&larr; All Demos</a>
+    <div class="page-title fi fi1">Distributor Portal</div>
+    <div class="page-subtitle fi fi1">West Coast Region &middot; Q1 2025 &middot; Harvest Goods Co.</div>
+    <div class="kpi-row fi fi2">
+      <div class="kpi"><div class="kpi-label">Monthly Orders</div><div class="kpi-value">342</div><div class="kpi-sub">+12% vs last month</div></div>
+      <div class="kpi"><div class="kpi-label">Revenue</div><div class="kpi-value">$847K</div><div class="kpi-sub">$2.47K avg order</div></div>
+      <div class="kpi"><div class="kpi-label">Active SKUs</div><div class="kpi-value">156</div><div class="kpi-sub">8 low stock</div></div>
+      <div class="kpi"><div class="kpi-label">Fill Rate</div><div class="kpi-value">96.2%</div><div class="kpi-sub">Target: 95%</div></div>
+    </div>
+    <div class="fi fi3">
+      <div class="section-header">Featured Products</div>
+      <div class="catalog">
+        <div class="product-card"><div class="product-sku">SKU-OG-0012</div><div class="product-name">Organic Oat Clusters</div><div class="product-cat">Breakfast &middot; Organic</div><div class="product-row"><div class="product-price">$4.29</div><div class="product-stock">2,400 units</div></div></div>
+        <div class="product-card"><div class="product-sku">SKU-BV-0034</div><div class="product-name">Cold-Press Lemonade 12pk</div><div class="product-cat">Beverages &middot; Natural</div><div class="product-row"><div class="product-price">$18.99</div><div class="product-stock stock-low">180 units</div></div></div>
+        <div class="product-card"><div class="product-sku">SKU-SN-0089</div><div class="product-name">Trail Mix Variety Box</div><div class="product-cat">Snacks &middot; Bulk</div><div class="product-row"><div class="product-price">$32.50</div><div class="product-stock">1,100 units</div></div></div>
+      </div>
+    </div>
+    <div class="fi fi4">
+      <div class="section-header">Place Order</div>
+      <div class="order-card">
+        <form id="orderForm">
+          <div class="form-group"><label>Product</label><select id="productId"><option value="SKU-OG-0012">Organic Oat Clusters &mdash; $4.29</option><option value="SKU-BV-0034">Cold-Press Lemonade 12pk &mdash; $18.99</option><option value="SKU-SN-0089">Trail Mix Variety Box &mdash; $32.50</option></select></div>
+          <div class="form-row">
+            <div class="form-group"><label>Quantity (cases)</label><input type="number" id="quantity" value="50" min="1"></div>
+            <div class="form-group"><label>Region</label><select id="tier"><option value="northeast">Northeast</option><option value="southeast">Southeast</option><option value="midwest">Midwest</option><option value="west">West</option></select></div>
+          </div>
+          <div class="form-group"><label>Fulfillment Zone</label><select id="priority"><option value="southeast">Southeast</option><option value="northeast">Northeast</option><option value="central">Central</option><option value="pacific">Pacific</option></select></div>
+          <button type="submit" class="btn-order" id="submitBtn">Place Order</button>
+        </form>
+        <div id="result" class="result-box"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    /* Ensure locked-mode config is in localStorage for direct navigation */
+    (function () {
+      if (localStorage.getItem('devinOrgId') && localStorage.getItem('devinUserId')) return;
+      fetch('/api/config').then(function (r) { return r.json(); }).then(function (cfg) {
+        if (cfg.lockOrg && cfg.defaultOrgId) localStorage.setItem('devinOrgId', cfg.defaultOrgId);
+        if (cfg.lockUser && cfg.defaultUserId) localStorage.setItem('devinUserId', cfg.defaultUserId);
+      }).catch(function () {});
+    })();
+  </script>
+  <script>
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const result = document.getElementById('result');
+      btn.disabled = true; btn.textContent = 'Processing...';
+      result.className = 'result-box';
+      try {
+        const res = await fetch('/api/cpg/order', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ distributorId: 'DIST-001', region: document.getElementById('tier').value, fulfillmentZone: document.getElementById('priority').value, items: [{ sku: document.getElementById('productId').value, qty: parseInt(document.getElementById('quantity').value) }], devinUserId: localStorage.getItem('devinUserId') || '', devinOrgId: localStorage.getItem('devinOrgId') || '', devinEmail: localStorage.getItem('devinEmail') || '' }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          result.className = 'result-box error';
+          result.innerHTML = `<div class="error-title">Order Failed</div><div class="error-detail">${data.errorClass}: ${data.error}</div>`;
+        } else {
+          result.className = 'result-box success';
+          result.innerHTML = `<div class="error-title">Order Confirmed</div><div class="error-detail">Order #${data.orderId} &mdash; Total: $${data.total} (${data.discount}% discount applied)</div>`;
+        }
+      } catch (err) {
+        result.className = 'result-box error';
+        result.innerHTML = `<div class="error-title">Network Error</div><div class="error-detail">${err.message}</div>`;
+      } finally { btn.disabled = false; btn.textContent = 'Place Order'; }
+    });
+  </script>
+  <script src="/session-cap-banner.js"></script>
+</body>
+</html>
